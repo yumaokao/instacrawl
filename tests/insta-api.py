@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-import argparse
-from instabot import Bot
+from instagram.client import InstagramAPI
 
 
 class Insta:
@@ -23,19 +22,12 @@ class Insta:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='insta')
-    parser.add_argument('-u', '--username', help="username")
-    parser.add_argument('-p', '--password', help="password")
-    parser.add_argument('--proxy', help="proxy")
-    parser.add_argument('hashtags', type=str, nargs='+', help='hashtags')
-    args = parser.parse_args()
+    client_id = 'eda84a8c2e614e1d848a669b0cbbc1ef'          # user your client id
+    client_secret = '1435907e959e4920bb077bc9475aed02'      # user your client secret id
+    redirect_uri = 'http://localhost'                       # user your redirect_uri
 
-    bot = Bot()
-    bot.login(username=args.username, password=args.password)
-
-    for hashtag in args.hashtags:
-        medias = bot.get_hashtag_medias(hashtag)
-        print(medias)
+    client = Insta(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
+    client.access_token()
 
 
 if __name__ == "__main__":
