@@ -105,3 +105,4 @@ ENV/
 
 # instabot
 instabot
+*.checkpoint

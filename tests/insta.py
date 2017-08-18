@@ -33,9 +33,15 @@ def main():
     bot = Bot()
     bot.login(username=args.username, password=args.password)
 
+    '''
     for hashtag in args.hashtags:
         medias = bot.get_hashtag_medias(hashtag)
         print(medias)
+    '''
+    user_id = bot.get_userid_from_username('yumaokao')
+    followings = bot.get_user_following(user_id)
+    print(user_id)
+    print(followings)
 
 
 if __name__ == "__main__":
