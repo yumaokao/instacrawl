@@ -12,10 +12,28 @@ def crawler(bot, user_id):
     followings = bot.get_user_following(user_id)
     print('{} {} has {} medias {} followings'.format(username, user_id, len(medias), len(followings)))
     read_userids.append(user_id)
-    bot.download_photos(medias)
+    # bot.download_photos(medias)
     for f in followings:
         if f not in read_userids:
             crawler(bot, f)
+
+
+class Crawler():
+    def __init__(self):
+        self.bot = Bot()
+
+    def login(self, username='', password=''):
+        self.bot.login(username=username, password=password)
+
+    def crawler_from_username(self, username):
+        user_id = self.bot.get_userid_from_username('yumaokao')
+        self.crawler(user_id)
+
+    def crawler(self, user_id):
+        medias = self.bot.get_user_medias(user_id)
+        username = self.bot.get_username_from_userid(user_id)
+        followings = self.bot.get_user_following(user_id)
+        print('{} {} has {} medias {} followings'.format(username, user_id, len(medias), len(followings)))
 
 
 def main():
@@ -26,11 +44,12 @@ def main():
     # parser.add_argument('hashtags', type=str, nargs='+', help='hashtags')
     args = parser.parse_args()
 
-    bot = Bot()
+    bot = Crawler()
     bot.login(username=args.username, password=args.password)
 
-    user_id = bot.get_userid_from_username('yumaokao')
-    crawler(bot, user_id)
+    bot.crawler_from_username('yumaokao')
+    # user_id = bot.get_userid_from_username('yumaokao')
+    # crawler(bot, user_id)
 
     '''
     for hashtag in args.hashtags:
