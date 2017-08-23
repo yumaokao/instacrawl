@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+from tqdm import tqdm
 from instabot import Bot
 
 
@@ -21,19 +22,35 @@ def crawler(bot, user_id):
 class Crawler():
     def __init__(self):
         self.bot = Bot()
+        self.read_userids = []
+
 
     def login(self, username='', password=''):
         self.bot.login(username=username, password=password)
 
     def crawler_from_username(self, username):
-        user_id = self.bot.get_userid_from_username('yumaokao')
+        user_id = self.bot.get_userid_from_username(username)
         self.crawler(user_id)
 
     def crawler(self, user_id):
         medias = self.bot.get_user_medias(user_id)
         username = self.bot.get_username_from_userid(user_id)
         followings = self.bot.get_user_following(user_id)
-        print('{} {} has {} medias {} followings'.format(username, user_id, len(medias), len(followings)))
+        self.bot.logger.info('{} {} has {} medias {} followings'.format(username, user_id, len(medias), len(followings)))
+        self.download_photos(medias)
+
+    def download_photos(self, medias, path='photos/'):
+        broken_items = []
+        if len(medias) == 0:
+            self.bot.logger.info("Nothing to downloads.")
+            return broken_items
+        self.bot.logger.info("Going to download %d medias." % (len(medias)))
+        for media in tqdm(medias):
+            if not self.bot.download_photo(media, path):
+                # delay.error_delay(self)
+                broken_items = medias[medias.index(media):]
+                break
+        return broken_items
 
 
 def main():
