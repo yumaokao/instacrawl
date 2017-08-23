@@ -9,6 +9,19 @@ class CrawlerBot(Bot):
         super().__init__()
         self.read_userids = []
 
+    def download_photos(self, medias, path='photos/', description=False):
+        broken_items = []
+        if len(medias) == 0:
+            self.logger.info("Nothing to downloads.")
+            return broken_items
+        self.logger.info("Going to download %d medias." % (len(medias)))
+        for media in tqdm(medias):
+            if not self.download_photo(media, path, filename=media, description=description):
+                delay.error_delay(self)
+                broken_items = medias[medias.index(media):]
+                break
+        return broken_items
+
     def crawler_from_username(self, username):
         userid = self.get_userid_from_username(username)
         self.crawler(userid)
@@ -21,7 +34,7 @@ class CrawlerBot(Bot):
         self.read_userids.append(userid)
         self.download_photos(medias)
         for u in followings:
-            if u not in read_userids:
+            if u not in self.read_userids:
                 self.crawler(u)
 
 
@@ -36,7 +49,7 @@ def main():
     bot = CrawlerBot()
     bot.login(username=args.username, password=args.password)
 
-    bot.crawler_from_username('yumaokao')
+    bot.crawler_from_username(args.username)
 
 
 if __name__ == "__main__":
