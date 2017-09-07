@@ -27,12 +27,15 @@ class CrawlerBot(Bot):
         self.crawler(userid)
 
     def crawler(self, userid):
-        medias = self.get_user_medias(userid)
-        username = self.get_username_from_userid(userid)
-        followings = self.get_user_following(userid)
-        self.logger.info('{} {} has {} medias {} followings'.format(username, userid, len(medias), len(followings)))
-        self.read_userids.append(userid)
-        self.download_photos(medias)
+        try:
+            medias = self.get_user_medias(userid)
+            username = self.get_username_from_userid(userid)
+            followings = self.get_user_following(userid)
+            self.logger.info('{} {} has {} medias {} followings'.format(username, userid, len(medias), len(followings)))
+            self.read_userids.append(userid)
+            self.download_photos(medias)
+        except:
+            return
         for u in followings:
             if u not in self.read_userids:
                 self.crawler(u)
