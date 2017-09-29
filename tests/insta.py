@@ -8,6 +8,7 @@ class CrawlerBot(Bot):
     def __init__(self):
         super().__init__()
         self.read_userids = []
+        self.queued_userids = []
 
     def download_photos(self, medias, path='photos/', description=False):
         broken_items = []
@@ -24,7 +25,13 @@ class CrawlerBot(Bot):
 
     def crawler_from_username(self, username):
         userid = self.get_userid_from_username(username)
-        self.crawler(userid)
+        self.queued_userids.append(userid)
+
+        while True:
+            if len(self.queued_userids) == 0:
+                break
+            userid = self.queued_userids.pop(0)
+            self.crawler(userid)
 
     def crawler(self, userid):
         try:
@@ -37,8 +44,8 @@ class CrawlerBot(Bot):
         except:
             return
         for u in followings:
-            if u not in self.read_userids:
-                self.crawler(u)
+            if u not in self.read_userids and u not in self.queued_userids:
+                self.queued_userids.append(u)
 
 
 def main():
